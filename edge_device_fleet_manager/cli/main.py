@@ -14,6 +14,9 @@ from ..core.config import get_config, get_config_sync
 from ..core.context import app_context, async_context_manager, context_manager
 from ..core.logging import setup_logging, get_logger
 from ..core.plugins import initialize_plugin_system, shutdown_plugin_system
+from ..discovery import DiscoveryEngine, DeviceRegistry
+from ..discovery.protocols import MDNSDiscovery, SSDPDiscovery, NetworkScanDiscovery
+from ..discovery.cache import DiscoveryCache
 from ..core.exceptions import EdgeFleetError
 
 # Install rich traceback handler
@@ -223,6 +226,95 @@ def reload_plugin(ctx: click.Context, name: str) -> None:
         # Reload plugin (would need async implementation)
         console.print(f"[yellow]Plugin reload not implemented in sync mode[/yellow]")
         return
+
+    except Exception as e:
+        console.print(f"[red]Plugin reload failed: {e}[/red]")
+        logger.error("Plugin reload failed", error=str(e), exc_info=e)
+
+
+@cli.command()
+@click.option('--protocols', '-p', multiple=True,
+              type=click.Choice(['mdns', 'ssdp', 'network_scan']),
+              help='Discovery protocols to use (default: all)')
+@click.option('--networks', '-n', multiple=True,
+              help='Network ranges to scan (e.g., 192.168.1.0/24)')
+@click.option('--timeout', '-t', default=10, type=int,
+              help='Discovery timeout in seconds')
+@click.option('--format', 'output_format', default='table',
+              type=click.Choice(['table', 'json', 'yaml']),
+              help='Output format')
+@click.option('--cache/--no-cache', default=True,
+              help='Use cached results if available')
+@click.pass_context
+def discover(ctx: click.Context, protocols: tuple, networks: tuple,
+             timeout: int, output_format: str, cache: bool) -> None:
+    """Discover devices on the network."""
+    try:
+        config = ctx.obj['config']
+
+        # Initialize discovery system
+        registry = DeviceRegistry()
+        discovery_cache = DiscoveryCache(config.redis, config.discovery.cache_ttl)
+        engine = DiscoveryEngine(config, registry)
+
+        # Register protocols
+        if not protocols or 'mdns' in protocols:
+            engine.register_protocol(MDNSDiscovery(config))
+        if not protocols or 'ssdp' in protocols:
+            engine.register_protocol(SSDPDiscovery(config))
+        if not protocols or 'network_scan' in protocols:
+            engine.register_protocol(NetworkScanDiscovery(config))
+
+        # Run discovery
+        console.print("🔍 Starting device discovery...")
+
+        # For now, use a simple sync approach
+        console.print(f"[yellow]Discovery not fully implemented in sync mode[/yellow]")
+        console.print(f"Protocols: {protocols or 'all'}")
+        console.print(f"Networks: {networks or 'auto-detect'}")
+        console.print(f"Timeout: {timeout}s")
+
+    except Exception as e:
+        console.print(f"[red]Discovery failed: {e}[/red]")
+        logger.error("Discovery command failed", error=str(e), exc_info=e)
+
+
+@cli.command()
+@click.option('--format', 'output_format', default='table',
+              type=click.Choice(['table', 'json', 'yaml']),
+              help='Output format')
+@click.option('--filter-type', '-t',
+              type=click.Choice(['iot_sensor', 'iot_gateway', 'camera', 'router',
+                               'switch', 'printer', 'media_server', 'smart_home']),
+              help='Filter by device type')
+@click.option('--filter-ip', '-i', help='Filter by IP address pattern')
+@click.option('--online-only', is_flag=True, help='Show only online devices')
+@click.pass_context
+def devices(ctx: click.Context, output_format: str, filter_type: str,
+            filter_ip: str, online_only: bool) -> None:
+    """List discovered devices."""
+    try:
+        config = ctx.obj['config']
+
+        # Initialize discovery cache
+        discovery_cache = DiscoveryCache(config.redis, config.discovery.cache_ttl)
+
+        console.print("📱 Discovered Devices")
+        console.print("=" * 50)
+
+        # For now, show placeholder
+        console.print(f"[yellow]Device listing not fully implemented[/yellow]")
+        console.print(f"Format: {output_format}")
+        if filter_type:
+            console.print(f"Filter type: {filter_type}")
+        if filter_ip:
+            console.print(f"Filter IP: {filter_ip}")
+        if online_only:
+            console.print("Showing online devices only")
+
+    except Exception as e:
+        console.print(f"[red]Failed to list devices: {e}[/red]")
+        logger.error("Devices command failed", error=str(e), exc_info=e)
         
         if result.success:
             console.print(f"[green]Plugin '{name}' reloaded successfully[/green]")
