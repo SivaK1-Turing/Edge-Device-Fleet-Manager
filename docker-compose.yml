@@ -1,0 +1,185 @@
+# Docker Compose for Edge Device Fleet Manager Development
+
+version: '3.8'
+
+services:
+  # Main application
+  edge-fleet-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: edge-fleet-manager
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - DATABASE__URL=postgresql://edge_fleet:edge_fleet_pass@postgres:5432/edge_fleet
+      - REDIS__HOST=redis
+      - REDIS__PORT=6379
+      - MQTT__BROKER_HOST=mosquitto
+      - MQTT__BROKER_PORT=1883
+      - LOGGING__LEVEL=DEBUG
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - ./plugins:/app/plugins
+      - ./configs:/app/configs
+      - ./logs:/app/logs
+    ports:
+      - "8000:8000"
+      - "9090:9090"
+    depends_on:
+      - postgres
+      - redis
+      - mosquitto
+      - localstack
+    networks:
+      - edge-fleet-network
+    restart: unless-stopped
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: edge-fleet-postgres
+    environment:
+      - POSTGRES_DB=edge_fleet
+      - POSTGRES_USER=edge_fleet
+      - POSTGRES_PASSWORD=edge_fleet_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - edge-fleet-network
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: edge-fleet-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - edge-fleet-network
+    restart: unless-stopped
+
+  # MQTT Broker
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: edge-fleet-mosquitto
+    volumes:
+      - ./configs/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_logs:/mosquitto/log
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    networks:
+      - edge-fleet-network
+    restart: unless-stopped
+
+  # LocalStack for AWS services emulation
+  localstack:
+    image: localstack/localstack:latest
+    container_name: edge-fleet-localstack
+    environment:
+      - SERVICES=secretsmanager,s3,kms
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - localstack_data:/tmp/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "4566:4566"
+    networks:
+      - edge-fleet-network
+    restart: unless-stopped
+
+  # Prometheus for metrics
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: edge-fleet-prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - edge-fleet-network
+    restart: unless-stopped
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: edge-fleet-grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./configs/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./configs/grafana/datasources:/etc/grafana/provisioning/datasources
+    ports:
+      - "3000:3000"
+    networks:
+      - edge-fleet-network
+    restart: unless-stopped
+
+  # Jaeger for distributed tracing
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: edge-fleet-jaeger
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686"
+      - "14268:14268"
+      - "14250:14250"
+      - "4317:4317"
+      - "4318:4318"
+    networks:
+      - edge-fleet-network
+    restart: unless-stopped
+
+  # Development tools container
+  dev-tools:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: test
+    container_name: edge-fleet-dev-tools
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    working_dir: /app
+    command: tail -f /dev/null
+    networks:
+      - edge-fleet-network
+    profiles:
+      - dev
+
+volumes:
+  postgres_data:
+  redis_data:
+  mosquitto_data:
+  mosquitto_logs:
+  localstack_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  edge-fleet-network:
+    driver: bridge

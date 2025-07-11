@@ -1,0 +1,49 @@
+# Production environment configuration
+
+debug: false
+environment: "production"
+
+# Database configuration for production
+database:
+  url: "postgresql://user:password@localhost:5432/edge_fleet"
+  echo: false
+  pool_size: 20
+  max_overflow: 40
+
+# MQTT configuration for production
+mqtt:
+  broker_host: "mqtt.production.com"
+  broker_port: 8883
+  keepalive: 120
+
+# Redis configuration for production
+redis:
+  host: "redis.production.com"
+  port: 6379
+  db: 0
+  max_connections: 100
+
+# Logging configuration for production
+logging:
+  level: "INFO"
+  debug_sampling_rate: 0.01
+  sentry_environment: "production"
+  sentry_traces_sample_rate: 0.05
+
+# AWS Secrets Manager configuration for production
+secrets:
+  region_name: "us-east-1"
+  auto_rotation_days: 30
+
+# Plugin system configuration for production
+plugins:
+  auto_reload: false
+  max_load_retries: 3
+  load_timeout: 60
+
+# Discovery configuration for production
+discovery:
+  max_retries: 15
+  rate_limit_per_host: 20
+  rate_limit_global: 500
+  cache_ttl: 600

@@ -1,0 +1,38 @@
+# Development environment configuration
+
+debug: true
+environment: "development"
+
+# Database configuration for development
+database:
+  url: "sqlite:///edge_fleet_dev.db"
+  echo: true
+
+# MQTT configuration for development
+mqtt:
+  broker_host: "localhost"
+  broker_port: 1883
+
+# Redis configuration for development
+redis:
+  host: "localhost"
+  port: 6379
+  db: 1
+
+# Logging configuration for development
+logging:
+  level: "DEBUG"
+  debug_sampling_rate: 1.0
+  sentry_environment: "development"
+
+# Plugin system configuration for development
+plugins:
+  auto_reload: true
+  reload_delay: 0.5
+  max_load_retries: 5
+
+# Discovery configuration for development
+discovery:
+  mdns_timeout: 2
+  ssdp_timeout: 5
+  max_retries: 5
