@@ -1,0 +1,3 @@
+[console_scripts]
+edfm = edge_device_fleet_manager.cli.main:main
+edge-fleet = edge_device_fleet_manager.cli.main:main

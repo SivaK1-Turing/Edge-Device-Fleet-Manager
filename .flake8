@@ -1,0 +1,35 @@
+[flake8]
+max-line-length = 88
+extend-ignore = 
+    E203,  # whitespace before ':'
+    W503,  # line break before binary operator
+    E501,  # line too long (handled by black)
+    E402,  # module level import not at top of file
+    F401,  # imported but unused (handled by autoflake)
+max-complexity = 10
+exclude = 
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    env,
+    .env,
+    build,
+    dist,
+    *.egg-info,
+    .tox,
+    .coverage,
+    .pytest_cache,
+    migrations,
+    alembic/versions
+per-file-ignores =
+    __init__.py:F401
+    tests/*:S101,S106,S108,S311,S602,S603,S607
+    */migrations/*:E501
+    */alembic/versions/*:E501
+docstring-convention = google
+# Bandit configuration
+bandit-skip = B101,B601
+# Additional plugins
+select = E,W,F,C,B,S,D
+ignore = D100,D101,D102,D103,D104,D105,D106,D107

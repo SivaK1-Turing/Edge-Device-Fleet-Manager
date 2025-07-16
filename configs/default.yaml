@@ -1,0 +1,71 @@
+# Default configuration for Edge Device Fleet Manager
+
+app_name: "Edge Device Fleet Manager"
+app_version: "0.1.0"
+debug: false
+environment: "development"
+
+# Database configuration
+database:
+  url: "sqlite:///edge_fleet.db"
+  echo: false
+  pool_size: 10
+  max_overflow: 20
+  pool_timeout: 30
+  pool_recycle: 3600
+
+# MQTT configuration
+mqtt:
+  broker_host: "localhost"
+  broker_port: 1883
+  client_id: "edge_fleet_manager"
+  keepalive: 60
+  qos: 1
+  topics:
+    - "edge/+/telemetry"
+    - "edge/+/status"
+    - "edge/+/alerts"
+
+# Redis configuration
+redis:
+  host: "localhost"
+  port: 6379
+  db: 0
+  socket_timeout: 5
+  socket_connect_timeout: 5
+  max_connections: 50
+
+# Logging configuration
+logging:
+  level: "INFO"
+  format: "json"
+  debug_sampling_rate: 0.05
+  correlation_id_header: "X-Correlation-ID"
+  sentry_environment: "development"
+  sentry_traces_sample_rate: 0.1
+
+# AWS Secrets Manager configuration
+secrets:
+  region_name: "us-east-1"
+  secret_name: "edge-fleet-manager/secrets"
+  auto_rotation_days: 30
+  encryption_key_name: "edge-fleet-manager/encryption-key"
+
+# Plugin system configuration
+plugins:
+  plugins_dir: "plugins"
+  auto_reload: true
+  reload_delay: 1.0
+  max_load_retries: 3
+  load_timeout: 30
+
+# Device discovery configuration
+discovery:
+  mdns_timeout: 5
+  ssdp_timeout: 10
+  max_retries: 10
+  retry_backoff_factor: 2.0
+  retry_jitter: true
+  rate_limit_per_host: 10
+  rate_limit_global: 100
+  cache_ttl: 300
