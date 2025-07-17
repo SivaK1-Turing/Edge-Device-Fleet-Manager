@@ -277,13 +277,19 @@ class NetworkDiscovery:
 class NetworkScanDiscovery(DiscoveryProtocol):
     """Network scanning discovery protocol implementation."""
     
-    def __init__(self, config):
+    def __init__(self, config=None):
         super().__init__("network_scan")
         self.config = config
-        self.rate_limiter = RateLimiter(RateLimitConfig(
-            per_host_limit=config.discovery.rate_limit_per_host,
-            global_limit=config.discovery.rate_limit_global
-        ))
+        if config:
+            self.rate_limiter = RateLimiter(RateLimitConfig(
+                per_host_limit=config.discovery.rate_limit_per_host,
+                global_limit=config.discovery.rate_limit_global
+            ))
+        else:
+            self.rate_limiter = RateLimiter(RateLimitConfig(
+                per_host_limit=10,
+                global_limit=100
+            ))
         self.port_scanner = PortScanner(self.rate_limiter)
         self.max_concurrent_hosts = 50
         self.max_concurrent_ports = 10

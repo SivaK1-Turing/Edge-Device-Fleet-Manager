@@ -8,9 +8,11 @@ including mDNS, SSDP, and network scanning.
 from .mdns import MDNSDiscovery
 from .ssdp import SSDPDiscovery
 from .network_scan import NetworkScanDiscovery
+from .snmp import SNMPDiscovery
 
 __all__ = [
     "MDNSDiscovery",
-    "SSDPDiscovery", 
+    "SSDPDiscovery",
     "NetworkScanDiscovery",
+    "SNMPDiscovery"
 ]
