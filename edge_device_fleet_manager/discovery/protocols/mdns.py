@@ -367,10 +367,10 @@ class MDNSDiscovery(DiscoveryProtocol):
         '_hap._tcp.local.',
     ]
     
-    def __init__(self, config):
+    def __init__(self, config=None):
         super().__init__("mdns")
         self.config = config
-        self.timeout = config.discovery.mdns_timeout
+        self.timeout = config.discovery.mdns_timeout if config else 5.0
     
     async def discover(self, service_types: Optional[List[str]] = None, **kwargs) -> DiscoveryResult:
         """Perform mDNS discovery."""

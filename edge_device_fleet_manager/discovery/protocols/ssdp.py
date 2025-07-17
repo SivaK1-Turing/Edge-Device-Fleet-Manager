@@ -158,10 +158,10 @@ class SSDPDiscovery(DiscoveryProtocol):
         'urn:schemas-dlna-org:device:MediaRenderer:1',
     ]
     
-    def __init__(self, config):
+    def __init__(self, config=None):
         super().__init__("ssdp")
         self.config = config
-        self.timeout = config.discovery.ssdp_timeout
+        self.timeout = config.discovery.ssdp_timeout if config else 5.0
     
     async def discover(self, search_targets: Optional[List[str]] = None, **kwargs) -> DiscoveryResult:
         """Perform SSDP discovery."""
