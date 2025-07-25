@@ -1,482 +1,96 @@
-# Edge Device Fleet Manager
+Edge Device Fleet Manager is a production-grade Python CLI and library to discover, configure, monitor, and maintain IoT edge devices at scale. It features a hot-reloadable plugin-driven CLI, multi-tier configuration with encrypted secrets, and async device discovery over mDNS/SSDP. A domain-driven repository with event sourcing powers telemetry ingestion via MQTT, advanced analytics, and real-time dashboards. Persistence uses SQLAlchemy/Alembic with encrypted fields, while dynamic visualizations and multi-format reporting (CSV/PDF/HTML) complete the toolchain. Backed by rigorous CI/CD, observability (Prometheus, Jaeger, Sentry), and end-to-end testing, it’s built to be robust and extensible.
 
-[![CI/CD Pipeline](https://github.com/edge-fleet/edge-device-fleet-manager/workflows/CI/CD%20Pipeline/badge.svg)](https://github.com/edge-fleet/edge-device-fleet-manager/actions)
-[![codecov](https://codecov.io/gh/edge-fleet/edge-device-fleet-manager/branch/main/graph/badge.svg)](https://codecov.io/gh/edge-fleet/edge-device-fleet-manager)
-[![PyPI version](https://badge.fury.io/py/edge-device-fleet-manager.svg)](https://badge.fury.io/py/edge-device-fleet-manager)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+1. Code Execution
 
-A production-grade Python CLI and library to discover, configure, monitor, and maintain IoT edge devices at scale. Features a hot-reloadable plugin-driven CLI, multi-tier configuration with encrypted secrets, and async device discovery over mDNS/SSDP.
+<img width="1920" height="1200" alt="code_execution1" src="https://github.com/user-attachments/assets/a3478235-685e-4f01-84af-16695952f155" />
 
-## 🚀 Features
+<img width="1920" height="1200" alt="code_execution2" src="https://github.com/user-attachments/assets/999bf967-7374-48e0-b9cb-44cb81d76376" />
 
-### Feature 1: Meta-Driven CLI & Configuration ✅
+<img width="1920" height="1200" alt="code_execution3" src="https://github.com/user-attachments/assets/a4c9bef6-8f67-492a-9894-d7ca0b1d80bd" />
 
-- **Hot-Reloadable Plugin System**: Watchdog-powered plugin loader that updates Click's registry on file events without restart
-- **Three-Tier Configuration**: YAML defaults, .env overrides, and encrypted AWS Secrets Manager entries with auto-rotation
-- **ContextVar-Based Context Management**: Propagates shared objects across sync and async Click commands
-- **Structured JSON Logging**: 5% DEBUG sampling, correlation IDs, and asynchronous Sentry integration
-- **Quality Enforcement**: Git hooks with pre-commit, black, isort, flake8, mypy --strict, and detect-secrets
-- **Custom Click Types**: DeviceIDType with remote schema validation, caching, and shell autocompletion
-- **CI/CD Pipeline**: GitHub Actions with Python 3.8-3.11 matrix, multi-stage Docker builds
-- **Debug REPL**: Hidden command launching IPython preloaded with app context
+<img width="1920" height="1200" alt="code_execution1" src="https://github.com/user-attachments/assets/f0d0e797-b363-4913-aa06-a4d73fe44190" />
 
-## 📦 Installation
+<img width="1920" height="1200" alt="code_execution" src="https://github.com/user-attachments/assets/52d62c24-7936-4493-b816-10b02f019ef0" />
 
-### From PyPI (Recommended)
+<img width="1920" height="1200" alt="code_execution2" src="https://github.com/user-attachments/assets/170f3ac8-fbc9-4c70-8613-544790a7118a" />
 
-```bash
-pip install edge-device-fleet-manager
-```
+<img width="1920" height="1200" alt="code_execution3" src="https://github.com/user-attachments/assets/0b8b6696-b9ac-43c3-a716-0885bbb5366b" />
 
-### From Source
+<img width="1920" height="1200" alt="code_execution" src="https://github.com/user-attachments/assets/340807f9-5aba-4a1e-9ca0-46707c0cd805" />
 
-```bash
-git clone https://github.com/edge-fleet/edge-device-fleet-manager.git
-cd edge-device-fleet-manager
-pip install -e ".[dev]"
-```
+<img width="1920" height="1200" alt="code_execution1" src="https://github.com/user-attachments/assets/8f32ba3c-bb9d-4c08-a684-7e972a54c298" />
 
-### Using Docker
+<img width="1920" height="1200" alt="code_execution2" src="https://github.com/user-attachments/assets/e4981393-457b-450a-9ef7-76489a8cb044" />
 
-```bash
-docker pull edgefleet/edge-device-fleet-manager:latest
-docker run --rm edgefleet/edge-device-fleet-manager:latest --help
-```
+<img width="1920" height="1200" alt="code_execution1" src="https://github.com/user-attachments/assets/85585e7f-cbf3-4904-8f48-2336c1a40461" />
 
-## 🏃‍♂️ Quick Start
+<img width="1920" height="1200" alt="code_execution2" src="https://github.com/user-attachments/assets/74515c50-489d-4fd4-8d7c-b0195360c4b0" />
 
-### Basic Usage
+<img width="1920" height="1200" alt="code_execution1" src="https://github.com/user-attachments/assets/ddc0eb65-9244-408f-b182-9cc984b71212" />
 
-```bash
-# Show help
-edge-fleet --help
+<img width="1920" height="1200" alt="code_execution2" src="https://github.com/user-attachments/assets/e41ac1b0-84e9-4be3-b031-c10404234cbd" />
 
-# Show current configuration
-edge-fleet config
+2. Test Execution
 
-# List loaded plugins
-edge-fleet plugins
+<img width="1920" height="1200" alt="test_execution1" src="https://github.com/user-attachments/assets/a5fc8556-be7f-40ef-a823-95ff4038f3e0" />
 
-# Reload a specific plugin
-edge-fleet reload-plugin --name sample
-
-# Access debug REPL (hidden command)
-edge-fleet debug-repl
-```
-
-### Configuration
-
-The system uses a three-tier configuration approach:
-
-1. **YAML Defaults** (`configs/default.yaml`)
-2. **Environment Variables** (`.env` file)
-3. **AWS Secrets Manager** (encrypted secrets with auto-rotation)
-
-## 🛠️ Development Mode Setup
-
-### Prerequisites
-
-- Python 3.8+
-- AWS CLI configured (for Secrets Manager)
-- Docker (optional)
-- Redis (for caching)
-
-### Local Development Setup
-
-1. **Clone and Install**:
-   ```bash
-   git clone https://github.com/edge-fleet/edge-device-fleet-manager.git
-   cd edge-device-fleet-manager
-   pip install -e ".[dev]"
-   ```
-
-2. **Set up Environment**:
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-3. **Install Pre-commit Hooks**:
-   ```bash
-   pre-commit install
-   pre-commit install --hook-type pre-push
-   ```
-
-4. **Run Tests**:
-   ```bash
-   pytest
-   ```
-
-### AWS Secrets Manager Setup
-
-#### Local Development with LocalStack
-
-For development, you can use LocalStack to emulate AWS Secrets Manager:
-
-```bash
-# Install LocalStack
-pip install localstack
-
-# Start LocalStack
-localstack start -d
-
-# Configure AWS CLI for LocalStack
-aws configure set aws_access_key_id test
-aws configure set aws_secret_access_key test
-aws configure set region us-east-1
-aws configure set endpoint_url http://localhost:4566
-
-# Create test secrets
-aws secretsmanager create-secret \
-    --name edge-fleet-manager/secrets \
-    --secret-string '{"database__password":"test_db_pass","mqtt__password":"test_mqtt_pass"}' \
-    --endpoint-url http://localhost:4566
-
-aws secretsmanager create-secret \
-    --name edge-fleet-manager/encryption-key \
-    --secret-string '{"key":"your-base64-encoded-fernet-key"}' \
-    --endpoint-url http://localhost:4566
-```
-
-#### Production AWS Setup
-
-1. **Create IAM Role/User** with permissions:
-   ```json
-   {
-       "Version": "2012-10-17",
-       "Statement": [
-           {
-               "Effect": "Allow",
-               "Action": [
-                   "secretsmanager:GetSecretValue",
-                   "secretsmanager:CreateSecret",
-                   "secretsmanager:UpdateSecret",
-                   "secretsmanager:DescribeSecret"
-               ],
-               "Resource": [
-                   "arn:aws:secretsmanager:*:*:secret:edge-fleet-manager/*"
-               ]
-           }
-       ]
-   }
-   ```
-
-2. **Create Secrets**:
-   ```bash
-   # Create encryption key
-   aws secretsmanager create-secret \
-       --name edge-fleet-manager/encryption-key \
-       --secret-string '{"key":"'$(python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())")'"}'
-
-   # Create application secrets
-   aws secretsmanager create-secret \
-       --name edge-fleet-manager/secrets \
-       --secret-string '{
-           "database__password":"your_secure_db_password",
-           "mqtt__password":"your_secure_mqtt_password",
-           "redis__password":"your_secure_redis_password",
-           "sentry_dsn":"your_sentry_dsn"
-       }'
-   ```
-
-### Plugin Development
-
-Create custom plugins in the `plugins/` directory:
-
-```python
-# plugins/my_plugin.py
-import click
-from edge_device_fleet_manager.core.plugins import Plugin, PluginMetadata
-from edge_device_fleet_manager.core.context import app_context, get_logger
-
-logger = get_logger(__name__)
-
-class MyPlugin(Plugin):
-    metadata = PluginMetadata(
-        name="my_plugin",
-        version="1.0.0",
-        description="My custom plugin",
-        author="Your Name",
-        commands=["my-command"]
-    )
-    
-    def initialize(self, config):
-        logger.info("My plugin initialized", config_debug=config.debug)
-    
-    @click.command()
-    @click.option('--message', default='Hello', help='Message to display')
-    def my_command(self, message: str):
-        """My custom command."""
-        correlation_id = app_context.correlation_id
-        logger.info("My command executed", message=message, correlation_id=correlation_id)
-        click.echo(f"{message} from my plugin! (ID: {correlation_id})")
-```
-
-The plugin will be automatically loaded and available as:
-```bash
-edge-fleet my-command --message "Custom message"
-```
-
-## 🧪 Testing
-
-### Running Tests
-
-```bash
-# Run all tests
-pytest
-
-# Run with coverage
-pytest --cov=edge_device_fleet_manager --cov-report=html
-
-# Run specific test categories
-pytest -m unit          # Unit tests only
-pytest -m integration   # Integration tests only
-pytest -m "not slow"    # Skip slow tests
-
-# Run tests in parallel
-pytest -n auto
-```
-
-### Test Categories
-
-- **Unit Tests**: Fast, isolated tests for individual components
-- **Integration Tests**: Tests that verify component interactions
-- **Slow Tests**: Long-running tests (marked with `@pytest.mark.slow`)
-
-### Feature 1 Specific Tests
-
-The plugin system includes comprehensive tests that specifically address the requirement:
-
-> "Using pytest-asyncio and Click's CliRunner, simulate a plugin load error (syntax exception) and assert the CLI logs a warning yet continues loading others."
-
-Run the specific test:
-```bash
-pytest tests/unit/test_plugins.py::TestPluginSystem::test_plugin_load_error_continues_loading_others -v
-```
-
-## 🔧 Configuration Reference
-
-### Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `ENVIRONMENT` | Environment name | `development` |
-| `DEBUG` | Enable debug mode | `false` |
-| `DATABASE__URL` | Database connection URL | `sqlite:///edge_fleet.db` |
-| `MQTT__BROKER_HOST` | MQTT broker hostname | `localhost` |
-| `MQTT__BROKER_PORT` | MQTT broker port | `1883` |
-| `REDIS__HOST` | Redis hostname | `localhost` |
-| `REDIS__PORT` | Redis port | `6379` |
-| `LOGGING__LEVEL` | Logging level | `INFO` |
-| `PLUGINS__AUTO_RELOAD` | Enable plugin hot-reload | `true` |
-
-### Configuration Files
-
-- `configs/default.yaml`: Default configuration
-- `configs/development.yaml`: Development overrides
-- `configs/production.yaml`: Production overrides
-- `.env`: Local environment variables
-
-## 🐳 Docker Usage
-
-### Development
-
-```bash
-# Build development image
-docker build -t edge-fleet-dev .
-
-# Run with volume mounts for development
-docker run -it --rm \
-    -v $(pwd)/plugins:/app/plugins \
-    -v $(pwd)/configs:/app/configs \
-    -e DEBUG=true \
-    edge-fleet-dev
-```
-
-### Production
-
-```bash
-# Pull and run production image
-docker run -d \
-    --name edge-fleet-manager \
-    -e ENVIRONMENT=production \
-    -e DATABASE__URL=postgresql://user:pass@db:5432/edge_fleet \
-    edgefleet/edge-device-fleet-manager:latest
-```
-
-## 📊 Monitoring and Observability
-
-### Logging
-
-- **Structured JSON logs** with correlation IDs
-- **Debug sampling** (5% by default) to reduce log volume
-- **Sentry integration** for error tracking and performance monitoring
-
-### Metrics
-
-- **Prometheus metrics** exposed on `/metrics` endpoint
-- **Plugin load times** and **error rates**
-- **Command execution metrics**
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Make your changes and add tests
-4. Run the test suite: `pytest`
-5. Run quality checks: `pre-commit run --all-files`
-6. Commit your changes: `git commit -m 'Add amazing feature'`
-7. Push to the branch: `git push origin feature/amazing-feature`
-8. Open a Pull Request
-
-### Code Quality
-
-This project enforces strict code quality standards:
-
-- **Black** for code formatting
-- **isort** for import sorting
-- **flake8** for linting
-- **mypy** for type checking (strict mode)
-- **bandit** for security scanning
-- **detect-secrets** for secret detection
-
-All checks run automatically via pre-commit hooks and CI/CD.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+<img width="1920" height="1200" alt="test_execution2" src="https://github.com/user-attachments/assets/e98e4123-1840-479d-98de-69d5e21268cd" />
 
-## 🙏 Acknowledgments
-
-- Built with [Click](https://click.palletsprojects.com/) for the CLI framework
-- [Pydantic](https://pydantic-docs.helpmanual.io/) for configuration management
-- [Watchdog](https://python-watchdog.readthedocs.io/) for file system monitoring
-- [Rich](https://rich.readthedocs.io/) for beautiful terminal output
-
-## 📞 Support
-
-- **Documentation**: [https://edge-fleet.github.io/edge-device-fleet-manager](https://edge-fleet.github.io/edge-device-fleet-manager)
-- **Issues**: [GitHub Issues](https://github.com/edge-fleet/edge-device-fleet-manager/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/edge-fleet/edge-device-fleet-manager/discussions)
-
-## 🏃‍♂️ Running Feature 1 Tests
-
-### Quick Test Run
-
-```bash
-# Run all Feature 1 tests
-python scripts/run_tests.py feature1 -v -c
+<img width="1920" height="1200" alt="test_execution1" src="https://github.com/user-attachments/assets/125d000d-8e9d-4729-9314-b208f3cc608b" />
 
-# Run specific plugin error handling test (addresses the prompt requirement)
-pytest tests/unit/test_plugins.py::TestPluginSystem::test_plugin_load_error_continues_loading_others -v
+<img width="1920" height="1200" alt="test_execution2" src="https://github.com/user-attachments/assets/ca27302c-6972-498d-acd0-1eabaa81054a" />
 
-# Run all plugin tests
-python scripts/run_tests.py plugins -v
+<img width="1920" height="1200" alt="test_execution1" src="https://github.com/user-attachments/assets/ea3d117f-a42a-4c11-a173-66876bc849c4" />
 
-# Run CLI tests
-python scripts/run_tests.py cli -v
-
-# Run configuration tests
-python scripts/run_tests.py config -v
+<img width="1920" height="1200" alt="test_execution2" src="https://github.com/user-attachments/assets/eb3f62cd-bc0b-473d-be98-784663954b87" />
 
-# Run context management tests
-python scripts/run_tests.py context -v
-```
+<img width="1920" height="1200" alt="test_execution1" src="https://github.com/user-attachments/assets/2f7015f0-07ef-439e-8d9c-13afba3cead1" />
 
-### Using Make Commands
+<img width="1920" height="1200" alt="test_execution2" src="https://github.com/user-attachments/assets/1b7cf141-10a2-4d5b-b2d4-9d76182a1c44" />
 
-```bash
-# Install development dependencies
-make install-dev
+<img width="1920" height="1200" alt="test_execution" src="https://github.com/user-attachments/assets/d9ef548b-1483-4f5f-ab58-9afab27e5f4c" />
 
-# Run all tests with coverage
-make test-coverage
+<img width="1920" height="1200" alt="test_execution1" src="https://github.com/user-attachments/assets/413e03a2-a238-4e89-9778-0715d57e9b4d" />
 
-# Run unit tests only
-make test-unit
+<img width="1920" height="1200" alt="test_execution2" src="https://github.com/user-attachments/assets/f505ee11-3745-4e2c-a9f2-a248f83de948" />
 
-# Run linting and type checking
-make lint
-make type-check
+<img width="1920" height="1200" alt="test_execution1" src="https://github.com/user-attachments/assets/5641f356-9897-410b-b87a-719abbfbf82b" />
 
-# Format code
-make format
+<img width="1920" height="1200" alt="test_execution2" src="https://github.com/user-attachments/assets/7149bb45-1e6e-45fb-9e6c-105830f99161" />
 
-# Run security checks
-make security-check
+<img width="1920" height="1200" alt="test_execution1" src="https://github.com/user-attachments/assets/4f3ff8bc-8b61-4af1-889f-d37791e74de9" />
 
-# Run all pre-commit hooks
-make pre-commit
-```
+<img width="1920" height="1200" alt="test_execution2" src="https://github.com/user-attachments/assets/050343c2-06df-44cb-823f-b36b569404a1" />
 
-### Using Tox (Multi-Python Testing)
+Project Features Mapped to Conversations
 
-```bash
-# Test across all Python versions
-tox
+Conversation 1: A production-grade plugin-driven CLI enables discovery and hot-reloading of commands via Watchdog. Config management merges YAML defaults, .env overrides, and AWS Secrets Manager–encrypted secrets with automatic key rotation. Shared context propagates across sync and async commands via ContextVars. Structured JSON logging with sampling and Sentry integration captures correlation IDs and errors. Pre-commit hooks enforce formatting, linting, type‑checks, and scanning. A hidden debug REPL provides inspection. A GitHub Actions CI pipeline runs linting, type‑checks, testing, and builds semantically tagged Docker images.
 
-# Test specific Python version
-tox -e py311
+Conversation 2: A high‑performance async discovery module uses mDNS and SSDP via asyncio and zeroconf to enumerate IoT edge devices. A token‑bucket rate limiter enforces per‑host and global quotas with exponential‑backoff retries and full jitter, differentiating timeouts from no‑response. Raw JSON and XML payloads parse into Pydantic models with validation. OpenTelemetry spans trace discovery calls to Jaeger with metadata. A Redis cache stores discovered devices with TTL. A Rich‑driven CLI batch mode accepts subnet lists, displays progress bars and retries failed shards.
 
-# Run linting
-tox -e lint
+Conversation 3: The domain‑driven repository models IoT edge devices as aggregate roots, enforcing invariants via factory methods for DeviceID, Model, and FirmwareVersion. A generic Repository interface offers in‑memory and SQLAlchemy‑backed implementations switchable at runtime. Thread safety uses asyncio locks for async flows and reentrant threading locks for sync contexts. Domain events like DeviceAdded and DeviceUpdated stream to Kafka via aiokafka, with consumers updating read models or triggering webhooks. Bulk CSV import via pandas supports 50k+ records with chunk validation and Rich table summaries.
 
-# Run type checking
-tox -e type-check
+Conversation 4: The telemetry ingestion and analytics pipeline ingests MQTT device metrics via asyncio‑mqtt, buffering messages in sliding windows processed via RxPY operators. Events persist to PostgreSQL JSONB using SQLAlchemy, with CQRS projections populating analytics tables for anomaly detection and uptime queries. Computations like moving averages and outlier detection run concurrently in a ProcessPoolExecutor to maximize throughput. Metrics including ingestion rate, latency, and error count are exposed via prometheus_client. A Rich TUI dashboard displays detailed real‑time analytics.
 
-# Run security checks
-tox -e security
+Conversation 5: The persistence layer uses robust SQLAlchemy Core to define declarative models for devices and telemetry with indexes and constraints. Alembic integration provides auto‑generated migrations tested on SQLite and PostgreSQL via pytest fixtures. At startup, schema drift detection compares models to the database, auto‑patching missing columns or aborting with a diff. Sensitive fields encrypt via a SQLAlchemy TypeDecorator using Fernet keys from AWS KMS rotated every ninety days. A backup/restore CLI streams compressed S3 dumps with multipart upload and checksum verification.
 
-# Run with coverage
-tox -e coverage
-```
+Conversation 6: The dynamic visualization and dashboard feature offers a modular plotting engine that discovers visualizer plugins via entry points, each implementing a draw(ax, data) interface. A headless FastAPI server serves cached SVG and PNG charts from Redis, invalidating on data updates and supporting WebSocket live reload. JSON‑driven GridSpec layouts enable subplot configurations with dual axes and colorblind‑friendly themes. A Bokeh dashboard polls Prometheus metrics for real‑time browser updates. CLI flags override DPI, figure size, and output format. Hot reload support enabled.
 
-### Docker Testing
+Conversation 7: The enterprise‑grade export and alerting feature refactors reporting into a Strategy pattern, loading CSVReporter, PDFReporter, and HTMLReporter via entry points. HTML reports use Jinja2 templates with Chart.js for interactive, responsive charts. PDF reports embed watermarks, encryption, and metadata per user permissions using PyPDF2. A send‑alert CLI integrates Twilio SMS and SendGrid email with templated messages, retry logic, and logs delivery statuses in an audit database. A Dockerized HTTP server securely serves reports over HTTPS with Let’s Encrypt and certificate renewal.
 
-```bash
-# Build and test in Docker
-make docker-build
-docker run --rm edge-device-fleet-manager:latest --help
+Conversation 8: The CI/CD, packaging, and observability feature ensures production readiness with a robust DevOps pipeline. A tox.ini matrix tests multiple Python versions across environments in parallel. A multi‑stage Dockerfile separates linting (flake8, mypy), testing (pytest --cov), and runtime into minimal images. GitHub Actions run CodeQL scans, test suites, coverage reporting, and build‑and‑push semantic‑versioned Docker images on tags. MkDocs generates and deploys documentation to GitHub Pages with live badges. Sentry captures performance spans, and a prometheus_client exporter provides metrics for Grafana dashboards.
 
-# Run full development stack
-docker-compose up -d
-docker-compose exec edge-fleet-manager edge-fleet --help
-```
 
-## 📋 Feature 1 Implementation Checklist
 
-- ✅ **Watchdog-powered plugin loader** with hot-reload capability
-- ✅ **Three-tier configuration** (YAML → .env → AWS Secrets Manager)
-- ✅ **ContextVar-based context management** for shared objects
-- ✅ **Structured JSON logging** with DEBUG sampling and Sentry integration
-- ✅ **Quality enforcement** via Git hooks and pre-commit
-- ✅ **Custom Click types** with validation and autocompletion
-- ✅ **GitHub Actions CI/CD** with Python matrix testing
-- ✅ **Debug REPL command** with IPython and app context
-- ✅ **Comprehensive unit tests** including plugin error handling
-- ✅ **Multi-stage Docker builds** with security scanning
 
-### Key Test Coverage
 
-The implementation specifically addresses the prompt requirement:
 
-> "Using pytest-asyncio and Click's CliRunner, simulate a plugin load error (syntax exception) and assert the CLI logs a warning yet continues loading others."
 
-This is implemented in `tests/unit/test_plugins.py::TestPluginSystem::test_plugin_load_error_continues_loading_others`
 
-## 🎯 Next Steps for Additional Features
 
-This completes **Feature 1: Meta-Driven CLI & Configuration**. The foundation is now ready for implementing the remaining features:
 
-- **Feature 2**: High-Performance Device Discovery
-- **Feature 3**: Domain-Driven Device Repository
-- **Feature 4**: Telemetry Ingestion & Advanced Analytics
-- **Feature 5**: Robust Persistence & Migrations
-- **Feature 6**: Dynamic Visualization & Dashboard
-- **Feature 7**: Enterprise-Grade Export & Alerting
-- **Feature 8**: CI/CD, Packaging & Observability
 
----
 
-**Edge Device Fleet Manager** - Bringing production-grade IoT device management to scale! 🚀
+
+
+
